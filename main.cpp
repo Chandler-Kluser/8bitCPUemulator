@@ -15,9 +15,10 @@ using namespace std;
 
 int main(){
     Mem mem;
+    mem.Initialise();
     CPU cpu;
     mem.Data[0] = 0x0F;
     cpu.Reset();
-    cout<<mem.read(0)<<endl;
+    cout<<hex<<mem.read(0)<<endl;
     return 0;
 }
