@@ -14,11 +14,11 @@
 using namespace std;
 
 int main(){
-    int ExtClock = 0;
+    int ExtClock = 0; // Generate an external clock counter
     Mem mem;
     mem.Initialise();
+    mem.write(0,0xF2);
     CPU cpu;
-    mem.Data[0] = 0x0F;
     cpu.Reset( ExtClock );
     cpu.Execute( ExtClock, mem );
     return 0;
