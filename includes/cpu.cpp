@@ -8,6 +8,7 @@ struct CPU
 
     void Reset(){
         PC = 0x00;
+        A = B = I = M = 0x00;
     }
 
     void Execute ( unsigned char Cycles, Mem ){
