@@ -17,9 +17,14 @@ int main(){
     int ExtClock = 0; // Generate an external clock counter
     Mem mem;
     mem.Initialise();
-    mem.write(0,0xF2);
+    mem.Write(0,0x06);
     CPU cpu;
     cpu.Reset( ExtClock );
+    cpu.Debug();
     cpu.Execute( ExtClock, mem );
+    cpu.Debug();
+    ExtClock+=5;
+    cpu.Execute( ExtClock, mem );
+    cpu.Debug();
     return 0;
 }

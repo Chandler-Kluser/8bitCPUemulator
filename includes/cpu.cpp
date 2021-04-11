@@ -12,6 +12,18 @@ struct CPU
     Byte Step;      // 0-1-2-3-4 Instruction Step Counter
     Byte A,B,I,M;   // A, B, Instruction and Memory Address Registers
 
+    void Debug(){
+        cout<<"=================="<<endl;
+        cout<<"##    A   | "<<hex<<(A>>0)<<"  ##"<<endl;
+        cout<<"##    B   | "<<hex<<(B>>0)<<"  ##"<<endl;
+        cout<<"##    I   | "<<hex<<(I>>0)<<"  ##"<<endl;
+        cout<<"##    M   | "<<hex<<(M>>0)<<"  ##"<<endl;
+        cout<<"##   PC   | "<<hex<<(PC>>0)<<"  ##"<<endl;        
+        cout<<"=================="<<endl;
+        cout<<"|"<<endl;
+        cout<<"\\-> Cycles: "<<dec<<(Cycles>>0)<<endl;
+    }
+
     void Reset(int ExtClock){
         PC = 0x00;         // Zeros the PC
         A = B = I = M = 0x00; // Zeros the registers
@@ -26,16 +38,49 @@ struct CPU
         if (M>15) throw std::invalid_argument("M register has exceeded its limit of 4 bits.");
     }
 
-    void FetchInstruction(){
-        cout<<"The value of I register is: "<<hex<< (I>>0) <<endl;
-        cout<<"The 4 MSBs of I register is: "<<hex<< (I>>4) << endl;
-        cout<<"The 4 LSBs of I register is: "<<hex<< (I & 0x0F) << endl;
+    ByteDivider FetchInstruction(){ // Separates the 4 MSBs of the 4 LSBs of the Byte given by I register
+        ByteDivider a;
+        a.MSB = (I>>4);     // Instruction OpCode ( 4 MSBs )
+        a.LSB = (I & 0x0F); // Data ( 4 LSBs )
+        return a;
+    }
+
+    void Parser02(ByteDivider Inst){
+        switch (Inst.MSB)
+        {
+        case 0x0: // LDA X - Load A Register Function
+            M = Inst.LSB; // IO + MI
+            break;
+        default:
+            break;
+        }
+    }
+
+    void Parser03(ByteDivider Inst){
+        switch (Inst.MSB)
+        {
+        case 0x0: // LDA X - Load A Register Function
+            A = M; // MO + AI
+            break;
+        default:
+            break;
+        }
+    }
+
+    void Parser04(ByteDivider Inst){
+        switch (Inst.MSB)
+        {
+        case 0x0: // LDA X - Load A Register Function
+            break;
+        default:
+            break;
+        }
     }
 
     void Execute ( int ExtClock, Mem mem ){
         Step = 0x0; // Zerate the Step Counter
         CPUExceptions( ExtClock, mem ); // Raise some CPU Errors
-
+        ByteDivider Inst;
         while (Step<5){
             switch (Step)
             {
@@ -44,10 +89,19 @@ struct CPU
                 break;
             case 0x1:
                 PC++;            // CE
-                I = mem.read(M); // II + RO
+                I = mem.Read(M); // II + RO
                 break;
             case 0x2:
-                FetchInstruction();
+                Inst = FetchInstruction();
+                Parser02(Inst);
+                break;
+            case 0x3:
+                Inst = FetchInstruction();
+                Parser03(Inst);
+                break;
+            case 0x4:
+                Inst = FetchInstruction();
+                Parser04(Inst);
                 break;
             
             default:
