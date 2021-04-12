@@ -61,6 +61,14 @@ struct CPU
         case 0x3: // ADD X - Add in A Register
             M = Inst.LSB; // IO + MI
             break;
+        case 0x4: // ADI X - Add Imediatelly in A Register
+            B = Inst.LSB; // IO + BI
+            break;
+        case 0x7: // NOP - Does nothing
+            break;
+        case 0x8: // JMP X - Jump PC to X Address
+            PC = Inst.LSB; // J + IO
+            break;
         default:
             break;
         }
@@ -80,6 +88,14 @@ struct CPU
         case 0x3: // ADD X - Add in A Register
             B = mem.Read(M); // RO + BI
             break;
+        case 0x4: // ADI X - Add Imediatelly in A Register
+            // TO DO: verify overflow settings A>255
+            A = A + B; // SumO + AI
+            break;
+        case 0x7: // NOP - Does nothing
+            break;
+        case 0x8: // JMP X - Jump PC to X Address
+            break;
         default:
             break;
         }
@@ -95,7 +111,14 @@ struct CPU
         case 0x2: // STA X - Store A Register in Memory
             break;
         case 0x3: // ADD X - Add in A Register
+            // TO DO: verify overflow settings A>255
             A = A + B; // SumO + AI
+            break;
+        case 0x4: // ADI X - Add Imediatelly in A Register
+            break;
+        case 0x7: // NOP - Does nothing
+            break;
+        case 0x8: // JMP X - Jump PC to X Address
             break;
         default:
             break;
@@ -109,21 +132,21 @@ struct CPU
         while (Step<5){
             switch (Step)
             {
-            case 0x0:
+            case 0:
                 M = PC;          // CO + MI
                 break;
-            case 0x1:
-                PC++;            // CE
+            case 1:
+                PC++;            // CE --> Increment Program Counter
                 I = mem.Read(M); // II + RO
                 break;
-            case 0x2:
+            case 2:
                 Inst = FetchInstruction();
                 Parser02(Inst);
                 break;
-            case 0x3:
+            case 3:
                 Parser03(Inst);
                 break;
-            case 0x4:
+            case 4:
                 Parser04(Inst);
                 break;
             

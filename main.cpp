@@ -17,28 +17,21 @@ int main(){
     int ExtClock = 0; // Generate an external clock counter
     CPU cpu;
     cpu.mem.Initialise();
-    cpu.mem.Write(0x0,0x0F);
-    cpu.mem.Write(0x1,0x2E);
-    cpu.mem.Write(0x2,0x3E);
-    cpu.mem.Write(0x3,0x2F);
-    cpu.mem.Write(0xF,0x01);
+    cpu.mem.Write(0x0,0x0F); // LDA 15
+    cpu.mem.Write(0x1,0x2E); // STA 14
+    cpu.mem.Write(0x2,0x3E); // ADD 14
+    cpu.mem.Write(0x3,0x2F); // STA 15
+    cpu.mem.Write(0x4,0x82); // JMP 2
+    cpu.mem.Write(0xF,0x01); // 15-> 0x01
     cpu.Reset( ExtClock );
     cpu.Debug();
     cpu.mem.Debug();
-    cpu.Execute( ExtClock );
-    cpu.Debug();
-    cpu.mem.Debug();
-    ExtClock+=5;
-    cpu.Execute( ExtClock );
-    cpu.Debug();
-    cpu.mem.Debug();
-    ExtClock+=5;
-    cpu.Execute( ExtClock );
-    cpu.Debug();
-    cpu.mem.Debug();
-    ExtClock+=5;
-    cpu.Execute( ExtClock );
-    cpu.Debug();
-    cpu.mem.Debug();
+    for (int i = 0; i < 10; i++)
+    {
+        cpu.Execute( ExtClock );
+        cpu.Debug();
+        cpu.mem.Debug();
+        ExtClock+=5;
+    }
     return 0;
 }
