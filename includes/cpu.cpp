@@ -9,6 +9,7 @@ struct CPU
 {
     int Cycles = 0; // Catches the external Clock to do a Step per Clock cycle
     Byte PC;        // Program Counter
+    Byte Bus;       // 8-bit bus
     Byte Step;      // 0-1-2-3-4 Instruction Step Counter
     Byte A,B,I,M;   // A, B, Instruction and Memory Address Registers
     Mem mem;        // CPU Memory
