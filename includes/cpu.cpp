@@ -11,6 +11,7 @@ struct CPU
     Byte PC;        // Program Counter
     Byte Step;      // 0-1-2-3-4 Instruction Step Counter
     Byte A,B,I,M;   // A, B, Instruction and Memory Address Registers
+    Mem mem;        // CPU Memory
 
     void Debug(){
         cout<<"=================="<<endl;
@@ -30,7 +31,7 @@ struct CPU
         Cycles = ExtClock; // Matches the External Clock with the Internal Clock Counter
     }
 
-    void CPUExceptions(int ExtClock, Mem mem){
+    void CPUExceptions(int ExtClock){
         if (Cycles!=ExtClock) throw std::invalid_argument("External Clock and Intern Clock CPU Counter must match.");
         if (PC>15) throw std::invalid_argument("Program Counter has exceeded its limit of 4 bits.");
         if (Step>5) throw std::invalid_argument("Step Counter must be greater or equal to 0 and Lesser then 6.");
@@ -48,7 +49,16 @@ struct CPU
     void Parser02(ByteDivider Inst){
         switch (Inst.MSB)
         {
-        case 0x0: // LDA X - Load A Register Function
+        case 0x0: // LDA X - Load A Register
+            M = Inst.LSB; // IO + MI
+            break;
+        case 0x1: // LIA X - Load Imediatelly A Register
+            A = Inst.LSB; // IO + AI
+            break;
+        case 0x2: // STA X - Store A Register in Memory
+            M = Inst.LSB; // IO + MI
+            break;
+        case 0x3: // ADD X - Add in A Register
             M = Inst.LSB; // IO + MI
             break;
         default:
@@ -59,8 +69,16 @@ struct CPU
     void Parser03(ByteDivider Inst){
         switch (Inst.MSB)
         {
-        case 0x0: // LDA X - Load A Register Function
-            A = M; // MO + AI
+        case 0x0: // LDA X - Load A Register
+            A = mem.Read(M); // RO + AI
+            break;
+        case 0x1: // LIA X - Load Imediatelly A Register
+            break;    
+        case 0x2: // STA X - Store A Register in Memory
+            mem.Write(M,A); // AO + RI
+            break;
+        case 0x3: // ADD X - Add in A Register
+            B = mem.Read(M); // RO + BI
             break;
         default:
             break;
@@ -70,16 +88,23 @@ struct CPU
     void Parser04(ByteDivider Inst){
         switch (Inst.MSB)
         {
-        case 0x0: // LDA X - Load A Register Function
+        case 0x0: // LDA X - Load A Register
+            break;
+        case 0x1: // LIA X - Load Imediatelly A Register
+            break;
+        case 0x2: // STA X - Store A Register in Memory
+            break;
+        case 0x3: // ADD X - Add in A Register
+            A = A + B; // SumO + AI
             break;
         default:
             break;
         }
     }
 
-    void Execute ( int ExtClock, Mem mem ){
+    void Execute ( int ExtClock ){
         Step = 0x0; // Zerate the Step Counter
-        CPUExceptions( ExtClock, mem ); // Raise some CPU Errors
+        CPUExceptions( ExtClock ); // Raise some CPU Errors
         ByteDivider Inst;
         while (Step<5){
             switch (Step)
@@ -96,11 +121,9 @@ struct CPU
                 Parser02(Inst);
                 break;
             case 0x3:
-                Inst = FetchInstruction();
                 Parser03(Inst);
                 break;
             case 0x4:
-                Inst = FetchInstruction();
                 Parser04(Inst);
                 break;
             
