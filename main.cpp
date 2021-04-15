@@ -13,6 +13,16 @@
 
 using namespace std;
 
+void checkCLK(){
+    int a;
+    cin>>a;
+    if (a==0) {
+        cout<<"zero!"<<endl;
+    } else {
+        cout<<a<<endl;
+    }
+}
+
 int main(){
     int ExtClock = 0; // Generate an external clock counter
     CPU cpu;
@@ -25,11 +35,11 @@ int main(){
     // - Learn how to import an hex file to a C++ program
     // - Implement to the program, in order to have an argument when running the compiled emulator
 
-    // TO DO: disassembly the cpu::Execute function from 5 Steps and make it dependable of the external
-    // clock in every step, not only 5 to 5 steps
+    // TO DO: Implement the flags register and add the conditional instructions JEZ and JOC, add raise flag microinstruction when overflowing or zeroing the ALU
 
-    // TO DO: implement 8 bit bus (Byte) and add It to the struct CPU and add the values to the bus in
-    // every instruction that involves using it.
+    // TO DO: Add mneumonic interpreter to write in the CPU terminal debugger (example 0001 0010 -->  LIA 2)
+
+    // TO DO: add keypressed detection to make manual clocks or halt execution (see checkCLK function)
 
     cpu.mem.Write(0x0,0x0F); // LDA 15
     cpu.mem.Write(0x1,0x2E); // STA 14
@@ -40,12 +50,14 @@ int main(){
     cpu.Reset( ExtClock );
     cpu.Debug();
     cpu.mem.Debug();
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 5*5; i++)
     {
         cpu.Execute( ExtClock );
-        cpu.Debug();
-        cpu.mem.Debug();
-        ExtClock+=5;
+        if (i%5==0){
+            cpu.Debug();
+            cpu.mem.Debug();
+        }
+        ExtClock+=1;
     }
     return 0;
 }

@@ -20,6 +20,8 @@ struct CPU
         cout<<"##    B   | "<<hex<<(B>>0)<<"  ##"<<endl;
         cout<<"##    I   | "<<hex<<(I>>0)<<"  ##"<<endl;
         cout<<"##    M   | "<<hex<<(M>>0)<<"  ##"<<endl;
+        cout<<"##   RAM  | "<<hex<<(mem.Read(M)>>0)<<"  ##"<<endl;
+        cout<<"##   Bus  | "<<hex<<(Bus>>0)<<"  ##"<<endl;
         cout<<"##   PC   | "<<hex<<(PC>>0)<<"  ##"<<endl;        
         cout<<"=================="<<endl;
         cout<<"|"<<endl;
@@ -30,12 +32,13 @@ struct CPU
         PC = 0x00;         // Zeros the PC
         A = B = I = M = 0x00; // Zeros the registers
         Cycles = ExtClock; // Matches the External Clock with the Internal Clock Counter
+        Step = 0; // Zerate the Step Counter
     }
 
     void CPUExceptions(int ExtClock){
         if (Cycles!=ExtClock) throw std::invalid_argument("External Clock and Intern Clock CPU Counter must match.");
         if (PC>15) throw std::invalid_argument("Program Counter has exceeded its limit of 4 bits.");
-        if (Step>5) throw std::invalid_argument("Step Counter must be greater or equal to 0 and Lesser then 6.");
+        if (Step>4) throw std::invalid_argument("Step Counter must be greater or equal to 0 and Lesser then 5.");
         if (A>255||B>255||I>255) throw std::invalid_argument("A, B or I registers has exceeded its limit of 8 bits.");
         if (M>15) throw std::invalid_argument("M register has exceeded its limit of 4 bits.");
     }
@@ -52,23 +55,30 @@ struct CPU
         {
         case 0x0: // LDA X - Load A Register
             M = Inst.LSB; // IO + MI
+            Bus = M; // Write Bus
             break;
         case 0x1: // LIA X - Load Imediatelly A Register
             A = Inst.LSB; // IO + AI
+            Bus = A; // Write Bus
             break;
         case 0x2: // STA X - Store A Register in Memory
             M = Inst.LSB; // IO + MI
+            Bus = M; // Write Bus
             break;
         case 0x3: // ADD X - Add in A Register
             M = Inst.LSB; // IO + MI
+            Bus = M; // Write Bus
             break;
         case 0x4: // ADI X - Add Imediatelly in A Register
             B = Inst.LSB; // IO + BI
+            Bus = B; // Write Bus
             break;
         case 0x7: // NOP - Does nothing
+            Bus = 0; // Write Bus
             break;
         case 0x8: // JMP X - Jump PC to X Address
             PC = Inst.LSB; // J + IO
+            Bus = PC;  // Write Bus
             break;
         default:
             break;
@@ -80,22 +90,30 @@ struct CPU
         {
         case 0x0: // LDA X - Load A Register
             A = mem.Read(M); // RO + AI
+            Bus = A; // Write Bus
             break;
         case 0x1: // LIA X - Load Imediatelly A Register
+            Bus = 0; // Write Bus
             break;    
         case 0x2: // STA X - Store A Register in Memory
             mem.Write(M,A); // AO + RI
+            Bus = A; // Write Bus
             break;
         case 0x3: // ADD X - Add in A Register
             B = mem.Read(M); // RO + BI
+            Bus = B; // Write Bus
             break;
         case 0x4: // ADI X - Add Imediatelly in A Register
             // TO DO: verify overflow settings A>255
+            // TO DO: add carry to the flags register
             A = A + B; // SumO + AI
+            Bus = A; // Write Bus
             break;
         case 0x7: // NOP - Does nothing
+            Bus = 0; // Write Bus
             break;
         case 0x8: // JMP X - Jump PC to X Address
+            Bus = 0; // Write Bus
             break;
         default:
             break;
@@ -106,20 +124,27 @@ struct CPU
         switch (Inst.MSB)
         {
         case 0x0: // LDA X - Load A Register
+            Bus = 0; // Write Bus
             break;
         case 0x1: // LIA X - Load Imediatelly A Register
+            Bus = 0; // Write Bus
             break;
         case 0x2: // STA X - Store A Register in Memory
+            Bus = 0; // Write Bus
             break;
         case 0x3: // ADD X - Add in A Register
             // TO DO: verify overflow settings A>255
             A = A + B; // SumO + AI
+            Bus = A; // Write Bus
             break;
         case 0x4: // ADI X - Add Imediatelly in A Register
+            Bus = 0; // Write Bus
             break;
         case 0x7: // NOP - Does nothing
+            Bus = 0; // Write Bus
             break;
         case 0x8: // JMP X - Jump PC to X Address
+            Bus = 0; // Write Bus
             break;
         default:
             break;
@@ -127,18 +152,18 @@ struct CPU
     }
 
     void Execute ( int ExtClock ){
-        Step = 0x0; // Zerate the Step Counter
         CPUExceptions( ExtClock ); // Raise some CPU Errors
         ByteDivider Inst;
-        while (Step<5){
-            switch (Step)
+        switch (Step)
             {
             case 0:
                 M = PC;          // CO + MI
+                Bus = PC;
                 break;
             case 1:
                 PC++;            // CE --> Increment Program Counter
                 I = mem.Read(M); // II + RO
+                Bus = I;
                 break;
             case 2:
                 Inst = FetchInstruction();
@@ -149,13 +174,12 @@ struct CPU
                 break;
             case 4:
                 Parser04(Inst);
+                Step = -1;      // -1 will be added to 1 in order to restart to Step 0 again
                 break;
-            
             default:
                 break;
             }
             Cycles++;
             Step++;
-        }
     }
 };
