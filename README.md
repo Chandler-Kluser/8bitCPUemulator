@@ -5,7 +5,7 @@ Author: Chandler Klüser (chandler.kluser@gmail.com)
 ## Requirements:
 
 - g++ Installed
-- A Text Editor to make your programs
+- A HEX Editor (or a Text Editor + Assembler) to make your programs
 
 ## Installation:
 

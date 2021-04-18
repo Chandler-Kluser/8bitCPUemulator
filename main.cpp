@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 
     // TO DO: Implement the flags register and add the conditional instructions JEZ and JOC, add raise flag microinstruction when overflowing or zeroing the ALU
 
-    // TO DO: Add mneumonic interpreter to write in the CPU terminal debugger (example 0001 0010 -->  LIA 2)
+    // TO DO: Add mneumonic interpreter to write in the CPU terminal debugger (example 000 10010 -->  LDA 0x12)
 
     // TO DO: Add keypressed detection to make manual clocks or halt execution (see checkCLK function)
     // cpu.mem.Write(0x0,0x0F); // LDA 15
@@ -53,13 +53,13 @@ int main(int argc, char** argv){
     // cpu.mem.Write(0xF,0x01); // 15-> 0x01
 
     // Write Memory from HEX file
-    for (int i=0;i<0x10;i++){
+    for (int i=0;i<0x20;i++){
         cpu.mem.Write(i,int(buffer[i]));
     }
     
     cpu.Reset( ExtClock );
     cpu.mem.Debug();
-    cpu.Debug();
+    cpu.Debug(0);
     //int a = IntDialog("How many clocks do you want to cycle?");
     //for (int i = 0; i < a+1; i++)
     while(1)
@@ -70,7 +70,10 @@ int main(int argc, char** argv){
             if (a==1){
                 clrscr();
                 cpu.mem.Debug();
-                cpu.Debug();
+                cpu.Debug(0);
+                // if (cpu.Cycles>=5){
+                //     cout<<cpu.Step<<endl;
+                // }
             }
             else if (a!=0) break;
         // }
