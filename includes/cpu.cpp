@@ -238,8 +238,7 @@ struct CPU
 
     void Execute ( int ExtClock ){
         CPUExceptions( ExtClock ); // Raise some CPU Errors
-        if ( ExtClock==9) {
-            cout<<"";}
+        if (Cycles<1) Inst = FetchInstruction(); // Debug a Instr. in the first two clocks (when the decoder hasn't parsed that yet)
         switch (Step)
             {
             case 0:

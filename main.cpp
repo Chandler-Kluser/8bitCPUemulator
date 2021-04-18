@@ -1,5 +1,5 @@
 // ==================================================
-// ##        Ben Eater's CPU Emulator (v1.0)       ##
+// ##         Chandler's CPU Emulator (v1.0)       ##
 // ##                                              ##
 // ##  Author: Chandler Klüser Chantre             ##
 // ##  Date: 04/18/2021                            ##
@@ -40,43 +40,42 @@ int main(int argc, char** argv){
     CPU cpu;
     cpu.mem.Initialise();
 
-    // TO DO: Implement the flags register and add the conditional instructions JEZ and JOC, add raise flag microinstruction when overflowing or zeroing the ALU
+    // =========================== TO DO LIST ======================================
 
-    // TO DO: Add mneumonic interpreter to write in the CPU terminal debugger (example 000 10010 -->  LDA 0x12)
+    // TO DO: Test SUB, JEZ, STA and SWP instructions
 
     // TO DO: Add keypressed detection to make manual clocks or halt execution (see checkCLK function)
-    // cpu.mem.Write(0x0,0x0F); // LDA 15
-    // cpu.mem.Write(0x1,0x2E); // STA 14
-    // cpu.mem.Write(0x2,0x3E); // ADD 14
-    // cpu.mem.Write(0x3,0x2F); // STA 15
-    // cpu.mem.Write(0x4,0x82); // JMP 2
-    // cpu.mem.Write(0xF,0x01); // 15-> 0x01
+
+    // TO DO: Update README.md with the CPU + RAM informations
+
+    // TO DO: Add more args to the main function and a parser for those, suggestions:
+    // -h --help : display some help, argument entering
+    // -dm --dump-memory <txtfile> : dump memory in a txt file in every clock cycle
+    // -di --dump-instr <txtfile> : dump instructions executed in a txt file
+
+    // TO DO: Develop a quick assembler for this CPU
+
+    // TO DO: Make a brief GUI with Qt for the emulator
+
+    // =============================================================================
 
     // Write Memory from HEX file
     for (int i=0;i<0x20;i++){
         cpu.mem.Write(i,int(buffer[i]));
     }
-    
     cpu.Reset( ExtClock );
     cpu.mem.Debug();
     cpu.Debug(0);
-    //int a = IntDialog("How many clocks do you want to cycle?");
-    //for (int i = 0; i < a+1; i++)
     while(1)
     {
         cpu.Execute( ExtClock );
-        // if (i%5==0){
-            int a = IntDialog("Show next instruction? (1: yes /0: no /-1: exit)");
-            if (a==1){
-                clrscr();
-                cpu.mem.Debug();
-                cpu.Debug(0);
-                // if (cpu.Cycles>=5){
-                //     cout<<cpu.Step<<endl;
-                // }
-            }
-            else if (a!=0) break;
-        // }
+        int a = IntDialog("Show next instruction? (1: yes /0: no /-1: exit)");
+        if (a==1){
+            clrscr();
+            cpu.mem.Debug();
+            cpu.Debug();
+        }
+        else if (a!=0) break;
         ExtClock+=1;
     }
     return 0;

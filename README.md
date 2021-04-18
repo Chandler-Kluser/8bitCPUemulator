@@ -1,4 +1,4 @@
-# Ben Eater's 8-bit CPU C++ Emulator
+# Chandler's 8-bit CPU C++ Emulator
 
 Author: Chandler Klüser (chandler.kluser@gmail.com)
 
