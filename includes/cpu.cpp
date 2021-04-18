@@ -7,12 +7,13 @@ using namespace std;
 
 struct CPU
 {
-    int Cycles = 0; // Catches the external Clock to do a Step per Clock cycle
-    Byte PC;        // Program Counter
-    Byte Bus;       // 8-bit bus
-    Byte Step;      // 0-1-2-3-4 Instruction Step Counter
-    Byte A,B,I,M;   // A, B, Instruction and Memory Address Registers
-    Mem mem;        // CPU Memory
+    int Cycles = 0;     // Catches the external Clock to do a Step per Clock cycle
+    Byte PC;            // Program Counter
+    Byte Bus;           // 8-bit bus
+    Byte Step;          // 0-1-2-3-4 Instruction Step Counter
+    Byte A,B,I,M;       // A, B, Instruction and Memory Address Registers
+    Mem mem;            // CPU Memory
+    ByteDivider Inst;   // This is not a Real Hardware, This is only to keep in memory what instr the cpu has to parse
 
     void Debug(){
         cout<<"=================="<<endl;
@@ -25,7 +26,7 @@ struct CPU
         cout<<"##   PC   | "<<hex<<(PC>>0)<<"  ##"<<endl;        
         cout<<"=================="<<endl;
         cout<<"|"<<endl;
-        cout<<"\\-> Cycles: "<<dec<<(Cycles>>0)<<endl;
+        cout<<"\\-> Clock Cycle: "<<dec<<(Cycles>>0)<<endl;
     }
 
     void Reset(int ExtClock){
@@ -50,7 +51,7 @@ struct CPU
         return a;
     }
 
-    void Parser02(ByteDivider Inst){
+    void Parser02(){
         switch (Inst.MSB)
         {
         case 0x0: // LDA X - Load A Register
@@ -85,7 +86,7 @@ struct CPU
         }
     }
 
-    void Parser03(ByteDivider Inst){
+    void Parser03(){
         switch (Inst.MSB)
         {
         case 0x0: // LDA X - Load A Register
@@ -120,7 +121,7 @@ struct CPU
         }
     }
 
-    void Parser04(ByteDivider Inst){
+    void Parser04(){
         switch (Inst.MSB)
         {
         case 0x0: // LDA X - Load A Register
@@ -153,7 +154,6 @@ struct CPU
 
     void Execute ( int ExtClock ){
         CPUExceptions( ExtClock ); // Raise some CPU Errors
-        ByteDivider Inst;
         switch (Step)
             {
             case 0:
@@ -167,13 +167,13 @@ struct CPU
                 break;
             case 2:
                 Inst = FetchInstruction();
-                Parser02(Inst);
+                Parser02();
                 break;
             case 3:
-                Parser03(Inst);
+                Parser03();
                 break;
             case 4:
-                Parser04(Inst);
+                Parser04();
                 Step = -1;      // -1 will be added to 1 in order to restart to Step 0 again
                 break;
             default:

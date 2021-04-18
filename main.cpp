@@ -2,7 +2,7 @@
 // ##        Ben Eater's CPU Emulator (v1.0)       ##
 // ##                                              ##
 // ##  Author: Chandler Klüser Chantre             ##
-// ##  Date: 04/11/2021                            ##
+// ##  Date: 04/18/2021                            ##
 // ==================================================
 
 #include <iostream>
@@ -13,14 +13,17 @@
 
 using namespace std;
 
-void checkCLK(){
+void clrscr(){ // clears the screen
+    cout << "\033[2J\033[1;1H";
+}
+
+int IntDialog(string str,bool show = 1){ // test console input dialog
     int a;
-    cin>>a;
-    if (a==0) {
-        cout<<"zero!"<<endl;
-    } else {
-        cout<<a<<endl;
+    if (show){
+        cout<<endl<<str<<endl;
     }
+    cin>>a;
+    return a;
 }
 
 int main(){
@@ -31,7 +34,7 @@ int main(){
     // TO DO: find a way to write memory from an hexadecimal file, then
     // import to the program and use it to write the memory
 
-    // - Learn how does an hex file work
+    // - Learn how does an hex file work (OK)
     // - Learn how to import an hex file to a C++ program
     // - Implement to the program, in order to have an argument when running the compiled emulator
 
@@ -39,7 +42,7 @@ int main(){
 
     // TO DO: Add mneumonic interpreter to write in the CPU terminal debugger (example 0001 0010 -->  LIA 2)
 
-    // TO DO: add keypressed detection to make manual clocks or halt execution (see checkCLK function)
+    // TO DO: Add keypressed detection to make manual clocks or halt execution (see checkCLK function)
 
     cpu.mem.Write(0x0,0x0F); // LDA 15
     cpu.mem.Write(0x1,0x2E); // STA 14
@@ -48,15 +51,22 @@ int main(){
     cpu.mem.Write(0x4,0x82); // JMP 2
     cpu.mem.Write(0xF,0x01); // 15-> 0x01
     cpu.Reset( ExtClock );
-    cpu.Debug();
     cpu.mem.Debug();
-    for (int i = 0; i < 5*5; i++)
+    cpu.Debug();
+    //int a = IntDialog("How many clocks do you want to cycle?");
+    //for (int i = 0; i < a+1; i++)
+    while(1)
     {
         cpu.Execute( ExtClock );
-        if (i%5==0){
-            cpu.Debug();
-            cpu.mem.Debug();
-        }
+        // if (i%5==0){
+            int a = IntDialog("Show next instruction? (1: yes /0: no /-1: exit)");
+            if (a==1){
+                clrscr();
+                cpu.mem.Debug();
+                cpu.Debug();
+            }
+            else if (a!=0) break;
+        // }
         ExtClock+=1;
     }
     return 0;
