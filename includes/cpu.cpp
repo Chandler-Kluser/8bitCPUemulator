@@ -238,7 +238,8 @@ struct CPU
 
     void Execute ( int ExtClock ){
         CPUExceptions( ExtClock ); // Raise some CPU Errors
-        if (Cycles<1) Inst = FetchInstruction(); // Debug a Instr. in the first two clocks (when the decoder hasn't parsed that yet)
+        // if (Cycles<1) Inst = FetchInstruction(); // Debug a Instr. in the first two clocks (when the decoder hasn't parsed that yet)
+        Inst = FetchInstruction();
         switch (Step)
             {
             case 0:
@@ -251,7 +252,7 @@ struct CPU
                 Bus = I;
                 break;
             case 2:
-                Inst = FetchInstruction(); // Actually (in real HW) it is executed in the 3rd Step
+                // Inst = FetchInstruction(); // Actually (in real HW) it is executed in the 3rd Step
                 Parser02();
                 break;
             case 3:

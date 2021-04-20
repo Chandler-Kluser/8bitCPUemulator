@@ -2,7 +2,7 @@
 // ##         Chandler's CPU Emulator (v1.0)       ##
 // ##                                              ##
 // ##  Author: Chandler Klüser Chantre             ##
-// ##  Date: 04/18/2021                            ##
+// ##  Date: 04/19/2021                            ##
 // ==================================================
 
 #include <iostream>
@@ -42,11 +42,22 @@ int main(int argc, char** argv){
 
     // =========================== TO DO LIST ======================================
 
-    // TO DO: Test SUB, JEZ, STA and SWP instructions
-
     // TO DO: Add keypressed detection to make manual clocks or halt execution (see checkCLK function)
 
-    // TO DO: Update README.md with the CPU + RAM informations
+    // TO DO: Add console print functionality to print hex numbers lesser than 0x10
+    // to print one non significant digit.
+    // Example:
+    // How it actually is:  ||   How I wish it should be:
+    //       1F             ||            1F
+    //        A             ||            0A
+    //        3             ||            03
+    //       FF             ||            FF
+
+    // TO DO: Print the Instruction Argument as hex not in dec
+    // Example:
+    // How it actually is:  ||   How I wish it should be:
+    //       10             ||            0A
+    //       16             ||            FF
 
     // TO DO: Add more args to the main function and a parser for those, suggestions:
     // -h --help : display some help, argument entering
@@ -64,18 +75,22 @@ int main(int argc, char** argv){
         cpu.mem.Write(i,int(buffer[i]));
     }
     cpu.Reset( ExtClock );
-    cpu.mem.Debug();
-    cpu.Debug(0);
+    int count=0;
+    int a=0;
     while(1)
     {
-        cpu.Execute( ExtClock );
-        int a = IntDialog("Show next instruction? (1: yes /0: no /-1: exit)");
-        if (a==1){
-            clrscr();
-            cpu.mem.Debug();
-            cpu.Debug();
+        if (count%6==0)
+        {
+            if (cpu.Cycles>0) a = IntDialog("Show next instruction? (1: yes /0: no /-1: exit)");
+            if (a==1){
+                clrscr();
+                cpu.mem.Debug();
+                cpu.Debug();
+            }
+            else if (a!=0) break;
         }
-        else if (a!=0) break;
+        count++;
+        cpu.Execute( ExtClock );
         ExtClock+=1;
     }
     return 0;
