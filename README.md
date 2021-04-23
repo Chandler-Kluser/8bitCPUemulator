@@ -34,6 +34,10 @@ Instruction | Mneumonic | Description
 110 | ADD X | Adds Register A with the RAM data located in Address X
 111 | SUB X | Subtracts Register A with the RAM data located in Address X
 
+Tip: I recommend the [Lorenzi Custom Assembler](https://github.com/hlorenzi/customasm) to help programming.
+Install the recommended assembler and try to convert the sample code to a hex file:
+`customasm test.asm -o test.hex`
+
 ```
    AAA BBBBB
    \-/ \---/

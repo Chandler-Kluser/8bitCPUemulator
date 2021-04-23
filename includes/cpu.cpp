@@ -17,7 +17,7 @@ struct CPU
     bool EZ;            // EZ Flag Register
 
     string PrintInstruction(ByteDivider Inst){
-        string a;
+        string a,b;
         switch (Inst.MSB)
         {
         case 0: a = "LDA "; break;
@@ -30,7 +30,12 @@ struct CPU
         case 7: a = "SUB "; break;
         default: break;
         }
-        a = a+to_string(Inst.LSB);
+        if (Inst.LSB<15){
+            b="0";
+        } else {
+            b="";
+        }
+        a = a+b+to_string(Inst.LSB);
         return a;
     }
 

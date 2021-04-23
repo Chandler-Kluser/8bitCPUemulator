@@ -2,7 +2,7 @@
 // ##         Chandler's CPU Emulator (v1.0)       ##
 // ##                                              ##
 // ##  Author: Chandler Klüser Chantre             ##
-// ##  Date: 04/19/2021                            ##
+// ##  Date: 04/23/2021                            ##
 // ==================================================
 
 #include <iostream>
@@ -42,7 +42,10 @@ int main(int argc, char** argv){
 
     // =========================== TO DO LIST ======================================
 
-    // TO DO: Add keypressed detection to make manual clocks or halt execution (see checkCLK function)
+    // TO DO: Add menu to manual clocks or automatic clocks (S to do a single clock, I to
+    // do a 6 clock to skip instruction debugging, number to make manual clocks... )
+
+    // TO DO: Fix the assembler rules
 
     // TO DO: Add console print functionality to print hex numbers lesser than 0x10
     // to print one non significant digit.
@@ -63,9 +66,7 @@ int main(int argc, char** argv){
     // -h --help : display some help, argument entering
     // -dm --dump-memory <txtfile> : dump memory in a txt file in every clock cycle
     // -di --dump-instr <txtfile> : dump instructions executed in a txt file
-
-    // TO DO: Develop a quick assembler for this CPU (assembly to hex)
-
+    
     // TO DO: Develop a quick disassembler for this CPU (hex to assembly)
 
     // TO DO: Make a brief GUI with Qt for the emulator
