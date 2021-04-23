@@ -23,15 +23,18 @@ Author: Chandler Klüser (chandler.kluser@gmail.com)
 
 ## Instructions
 
-000 - LDA X : Loads to A the RAM data located in Address X
-001 - LIA X : Loades to A the X data directly (X must have 5-bit length)
-010 - STA X : Stores in A the RAM data located in Address X
-011 - SWP X : Swaps Registers A and B using the X RAM Address as Auxiliar Memory
-100 - JMP X : Jumps the Program Counter to the X Position (5-bit)
-101 - JEZ X : If ALU==0, Jumps the PC to the X Position (5-bit)
-110 - ADD X : Adds Register A with the RAM data located in Address X
-111 - SUB X : Subtracts Register A with the RAM data located in Address X
+Instruction | Mneumonic | Description
+----|-------|-------------------------
+000 | LDA X | Loads to A the RAM data located in Address X
+001 | LIA X | Loades to A the X data directly (X must have 5-bit length)
+010 | STA X | Stores in A the RAM data located in Address X
+011 | SWP X | Swaps Registers A and B using the X RAM Address as Auxiliar Memory
+100 | JMP X | Jumps the Program Counter to the X Position (5-bit)
+101 | JEZ X | If ALU==0, Jumps the PC to the X Position (5-bit)
+110 | ADD X | Adds Register A with the RAM data located in Address X
+111 | SUB X | Subtracts Register A with the RAM data located in Address X
 
+```
    AAA BBBBB
    \-/ \---/
     |    \-----> Argument (5-bit word)
@@ -42,27 +45,31 @@ JMP 13 --->  010 01101
              \-/ \---/
               |    \-----> Argument (5-bit word)
               \----------> OpCode (3-bit word)
+```
 
 ## CPU Architecture
 
-                    /--------------/-----------------/--------------------\
-                    |              |                 |                    | 
-                Register A ------ ALU --------- Register B                |     
-                    ||            ||                ||                    |   
-                    || 8 bit      || 8 bit          || 8 bit              |     
-                    ||            ||                ||                    |       
-Bus ============================================================ (8-bit)  |       
-            ||                  ||              \/ || /\                  |       
-            || 5 bit            || 8 bit     8 bit || 5 LSB's             |         
-            ||                  ||              \/ || /\                  |       
-       Memory Register     RAM (32x8-bit)   Instruction Register          |      
-             |                  |                  || \/                  |      
-             |                  |                  || 3 MSB's             |        
-             |                  |                  || \/                  |        
-             \------------------\----------------DECODER------------------/
+```
+                     /--------------/-----------------/--------------------\
+                     |              |                 |                    | 
+                 Register A ------ ALU --------- Register B                |     
+                     ||            ||                ||                    |   
+                     || 8 bit      || 8 bit          || 8 bit              |     
+                     ||            ||                ||                    |       
+ Bus ============================================================ (8-bit)  |       
+             ||                  ||              \/ || /\                  |       
+             || 5 bit            || 8 bit     8 bit || 5 LSB's             |         
+             ||                  ||              \/ || /\                  |       
+        Memory Register     RAM (32x8-bit)   Instruction Register          |      
+              |                  |                  || \/                  |      
+              |                  |                  || 3 MSB's             |        
+              |                  |                  || \/                  |        
+              \------------------\----------------DECODER------------------/
+```
 
 ## Decoder Details
 
+```
 RAM >> 32 8-bit Addresses (32 Bytes)
 Control Unit (DECODER) with 3-bit OpCode
 
@@ -82,9 +89,11 @@ Control Unit (DECODER) with 3-bit OpCode
 (Flag Register)
 
 *SB --> SIGNAL NOT A (NA) + NOT OUT (NO) IN ALU (HARDWARE IMPLEMENTED)
+```
 
 ## Decoder Signals Table
 
+```
 EZ Flag Register (Not a Control Signal) >----------------------\
                                                                |
 #===============================================================#
@@ -138,3 +147,4 @@ EZ Flag Register (Not a Control Signal) >----------------------\
 #   4  |  SUB X |AI|  |  |  |  |  |  |  |  |  |SO|SB|  |  |FI|XX#
 #   5  |  SUB X |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |XX#
 #===============================================================#
+```

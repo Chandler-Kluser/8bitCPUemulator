@@ -64,7 +64,9 @@ int main(int argc, char** argv){
     // -dm --dump-memory <txtfile> : dump memory in a txt file in every clock cycle
     // -di --dump-instr <txtfile> : dump instructions executed in a txt file
 
-    // TO DO: Develop a quick assembler for this CPU
+    // TO DO: Develop a quick assembler for this CPU (assembly to hex)
+
+    // TO DO: Develop a quick disassembler for this CPU (hex to assembly)
 
     // TO DO: Make a brief GUI with Qt for the emulator
 
@@ -76,7 +78,7 @@ int main(int argc, char** argv){
     }
     cpu.Reset( ExtClock );
     int count=0;
-    int a=0;
+    unsigned char a=1;
     while(1)
     {
         if (count%6==0)
